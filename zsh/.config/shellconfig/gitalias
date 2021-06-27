@@ -1,0 +1,44 @@
+# Outputs the name of the current branch
+# Usage example: git pull origin $(git_current_branch)
+# Using '--quiet' with 'symbolic-ref' will not cause a fatal error (128) if
+# it's not a symbolic ref, but in a Git repo.
+function git_current_branch() {
+  local ref
+  ref=$(__git_prompt_git symbolic-ref --quiet HEAD 2> /dev/null)
+  local ret=$?
+  if [[ $ret != 0 ]]; then
+    [[ $ret == 128 ]] && return  # no git repo.
+    ref=$(__git_prompt_git rev-parse --short HEAD 2> /dev/null) || return
+  fi
+  echo ${ref#refs/heads/}
+}
+
+function current_branch() {
+  git_current_branch
+}
+
+alias g='git'
+alias gst='git status'
+alias gc='git commit'
+alias gc!='git commit -v --amend'
+alias ga='git add'
+alias gaa='git add --all'
+alias gl='git pull'
+alias gpom='git pull origin master'
+alias gp='git push'
+alias gpuom='git push origin master'
+alias gd='git diff'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gac='git add . && git commit'
+alias grs='git restore --staged .'
+alias gre='git restore'
+alias gr='git remote'
+alias gcl='git clone'
+alias glg="git log --graph --abbrev-commit --decorate --format=format:'%C(bold green)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold yellow)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+alias gt='git ls-tree -r master --name-only'
+alias grm='git remote'
+alias gb='git branch'
+alias gm='git merge'
+alias gf='git fetch'
+alias gpsup='git push --set-upstream origin $(git_current_branch)'
